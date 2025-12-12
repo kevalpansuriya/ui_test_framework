@@ -1,0 +1,11 @@
+{
+  "baseUrl": "https://jsonplaceholder.typicode.com",
+  "uiBaseUrl": "https://the-internet.herokuapp.com",
+  "browser": "chrome",
+  "headless": false,
+  "implicitWait": 10,
+  "explicitWait": 20,
+  "screenshotPath": "screenshots",
+  "logPath": "logs"
+}
+
