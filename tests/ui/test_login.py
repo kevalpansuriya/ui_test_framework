@@ -22,7 +22,18 @@ class TestLogin(BaseUiTest):
     
     @pytest.mark.smoke
     def testSuccessfulLogin(self):
-        """Test successful login"""
+        """
+        Test successful login
+        
+        Test Steps:
+        1. Navigate to the login page
+        2. Enter valid username: "tomsmith"
+        3. Enter valid password: "SuperSecretPassword!"
+        4. Click the login button
+        5. Verify that the success message is displayed on the page
+        6. Verify that the success message contains the text "You logged into a secure area!"
+        7. Log that the login test passed successfully
+        """
         self.navigateTo("/login")
         
         username = "tomsmith"
@@ -38,7 +49,18 @@ class TestLogin(BaseUiTest):
     
     @pytest.mark.regression
     def testFailedLoginWithInvalidCredentials(self):
-        """Test failed login with invalid credentials"""
+        """
+        Test failed login with invalid credentials
+        
+        Test Steps:
+        1. Navigate to the login page
+        2. Enter invalid username: "invaliduser"
+        3. Enter invalid password: "invalidpassword"
+        4. Click the login button
+        5. Verify that an error message is displayed on the page
+        6. Verify that the error message contains the text "Your username is invalid!"
+        7. Log that the failed login test passed successfully
+        """
         self.navigateTo("/login")
         
         username = "invaliduser"
@@ -54,7 +76,16 @@ class TestLogin(BaseUiTest):
     
     @pytest.mark.regression
     def testFailedLoginWithEmptyFields(self):
-        """Test failed login with empty fields"""
+        """
+        Test failed login with empty fields
+        
+        Test Steps:
+        1. Navigate to the login page
+        2. Do not enter any username or password (leave fields empty)
+        3. Click the login button
+        4. Verify that an error message is displayed on the page
+        5. Log that the empty fields login test passed successfully
+        """
         self.navigateTo("/login")
         
         # Try to login without entering credentials

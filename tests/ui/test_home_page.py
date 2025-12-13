@@ -22,7 +22,15 @@ class TestHomePage(BaseUiTest):
     
     @pytest.mark.smoke
     def testHomePageLoads(self):
-        """Test that home page loads correctly"""
+        """
+        Test that home page loads correctly
+        
+        Test Steps:
+        1. Navigate to the home page (root URL)
+        2. Verify that the page has loaded successfully
+        3. Verify that the page elements are present and visible
+        4. Log that the home page load test passed successfully
+        """
         self.navigateTo("/")
         
         # Verify page is loaded
@@ -31,7 +39,16 @@ class TestHomePage(BaseUiTest):
     
     @pytest.mark.regression
     def testPageTitleExists(self):
-        """Test that page title exists"""
+        """
+        Test that page title exists
+        
+        Test Steps:
+        1. Navigate to the home page (root URL)
+        2. Get the page title from the page
+        3. Verify that the page title exists (is not None)
+        4. Verify that the page title is not empty (has content)
+        5. Log the page title and that the test passed successfully
+        """
         self.navigateTo("/")
         
         pageTitle = self.homePage.getPageTitle()
