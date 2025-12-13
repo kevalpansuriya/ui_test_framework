@@ -34,9 +34,51 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create directories
+        run: |
+          mkdir -p reports logs screenshots
+
       - name: Run pytest (${{ matrix.name }})
         env:
           PYTHONPATH: ${{ github.workspace }}
+          CI: "true"
         run: |
-          pytest ${{ matrix.pytest-args }}
+          pytest ${{ matrix.pytest-args }} --html=reports/report_${{ matrix.name }}.html --self-contained-html --log-cli-level=INFO || true
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.name }}
+          path: |
+            reports/
+          retention-days: 30
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs-${{ matrix.name }}
+          path: |
+            logs/
+          retention-days: 30
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots-${{ matrix.name }}
+          path: |
+            screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload test files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-files-${{ matrix.name }}
+          path: |
+            tests/**/*.py
+          retention-days: 30
 

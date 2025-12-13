@@ -1,4 +1,5 @@
 from typing import Optional, Tuple
+import os
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -37,14 +38,28 @@ class BaseUiTest:
         browser = self.configLoader.getBrowser().lower()
         headless = self.configLoader.isHeadless()
         
+        # Detect CI environment
+        is_ci = os.getenv("CI") == "true" or os.getenv("GITHUB_ACTIONS") == "true"
+        if is_ci:
+            headless = True  # Force headless in CI
+        
         if browser == "chrome":
             chromeOptions = Options()
             if headless:
-                chromeOptions.add_argument("--headless")
+                chromeOptions.add_argument("--headless=new")  # Use new headless mode
             chromeOptions.add_argument("--no-sandbox")
             chromeOptions.add_argument("--disable-dev-shm-usage")
             chromeOptions.add_argument("--disable-gpu")
             chromeOptions.add_argument("--window-size=1920,1080")
+            chromeOptions.add_argument("--disable-extensions")
+            chromeOptions.add_argument("--disable-software-rasterizer")
+            chromeOptions.add_argument("--disable-background-timer-throttling")
+            chromeOptions.add_argument("--disable-backgrounding-occluded-windows")
+            chromeOptions.add_argument("--disable-renderer-backgrounding")
+            chromeOptions.add_argument("--disable-features=TranslateUI")
+            chromeOptions.add_argument("--disable-ipc-flooding-protection")
+            if is_ci:
+                chromeOptions.add_argument("--remote-debugging-port=9222")
             chromeService = ChromeService(ChromeDriverManager().install())
             self.driver = webdriver.Chrome(service=chromeService, options=chromeOptions)
         elif browser == "firefox":
