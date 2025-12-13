@@ -107,4 +107,23 @@ class TestPostsApi(BaseApiTest):
         postId = 1
         response = self.postsApi.deletePost(postId)
         self.postsApi.verifyDeletePost(response, postId)
+    
+    @pytest.mark.regression
+    def testGetPostWithInvalidId(self):
+        """
+        Test that intentionally fails to demonstrate error handling for invalid post ID
+        
+        Test Steps:
+        1. Set an invalid post ID (999999 - a very large number that doesn't exist)
+        2. Send a GET request to retrieve the post with the invalid ID
+        3. This test expects a 200 status code but will fail because the post doesn't exist
+        4. The test will show detailed error information in the test report
+        5. This demonstrates how API test failures are reported with full error details
+        """
+        invalidPostId = 999999
+        response = self.postsApi.getPostById(invalidPostId)
+        
+        # This will fail because the post with ID 999999 doesn't exist
+        # The verification will fail and show detailed error information
+        self.postsApi.verifyGetPostById(response, invalidPostId)
 

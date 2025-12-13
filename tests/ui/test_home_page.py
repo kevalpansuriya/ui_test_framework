@@ -1,4 +1,5 @@
 import pytest
+from selenium.webdriver.common.by import By
 from pages.UI.home_page import HomePage
 from base.base_ui_test import BaseUiTest
 
@@ -55,4 +56,22 @@ class TestHomePage(BaseUiTest):
         assert pageTitle is not None, "Page title should exist"
         assert len(pageTitle) > 0, "Page title should not be empty"
         self.logger.info(f"Page title test passed. Title: {pageTitle}")
+    
+    @pytest.mark.regression
+    def testNonExistentElement(self):
+        """
+        Test that intentionally fails to demonstrate screenshot capture on failure
+        
+        Test Steps:
+        1. Navigate to the home page (root URL)
+        2. Try to find an element that does not exist on the page
+        3. This test will fail and trigger automatic screenshot capture
+        4. The screenshot will be saved in the screenshots directory
+        """
+        self.navigateTo("/")
+        
+        # This will fail because the element doesn't exist - screenshot will be captured
+        # The findElement method will raise a TimeoutException when element is not found
+        nonExistentElement = self.findElement((By.ID, "non-existent-element-id"), timeout=2)
+        assert nonExistentElement is not None, "This test intentionally fails to demonstrate screenshot capture"
 

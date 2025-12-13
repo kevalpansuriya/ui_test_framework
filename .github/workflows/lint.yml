@@ -1,0 +1,68 @@
+name: Linting
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run flake8 - Critical errors
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run flake8 - All checks
+        run: |
+          flake8 . --count --max-complexity=10 --max-line-length=120 --statistics
+
+      - name: Run flake8 - Unused variables check
+        run: |
+          flake8 . --select=F841 --show-source --statistics
+
+      - name: Run pylint
+        continue-on-error: false
+        run: |
+          python_files=$(find . -name "*.py" \
+            -not -path "./.venv/*" \
+            -not -path "./venv/*" \
+            -not -path "./__pycache__/*" \
+            -not -path "./.pytest_cache/*" \
+            -not -path "./.git/*" \
+            -not -path "./build/*" \
+            -not -path "./dist/*" \
+            -not -path "./*.egg-info/*")
+          
+          if [ -z "$python_files" ]; then
+            echo "No Python files found to lint"
+            exit 0
+          fi
+          
+          echo "$python_files" | xargs pylint --rcfile=.pylintrc --fail-under=7.0
+
+      - name: Upload linting results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linting-results
+          path: |
+            *.txt
+          retention-days: 7
+          if-no-files-found: ignore
+
