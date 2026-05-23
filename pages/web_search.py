@@ -19,7 +19,7 @@ class WebSearch:
         """Search Google for `query` and return the Playwright page on LinkedIn."""
         google = GoogleSearchPage(self.page, self.config)
         google.enable_stealth_mode()
-        google.open_homepage()
+        # One navigation straight to search results (skip extra google.com homepage visit)
         google.search(query)
 
         if google.has_captcha():

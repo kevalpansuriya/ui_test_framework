@@ -45,11 +45,12 @@ class GoogleSearchPage(BasePage):
         self._accept_cookies_if_needed()
 
     def _accept_cookies_if_needed(self) -> None:
-        for label in ("Accept all", "I agree", "Accept", "Agree"):
-            self.click_if_visible(label, wait_ms=2_000)
+        # Short timeout: most runs have no banner; avoids ~8s of idle waiting
+        for label in ("Accept all", "I agree"):
+            self.click_if_visible(label, wait_ms=800)
 
     def search(self, query: str) -> None:
-        """Run a search using the URL bar (stable) or the search box (fallback)."""
+        """Open Google search results for the query (single page load)."""
         search_url = f"{self.google_url}/search?q={quote_plus(query)}&hl=en&gl=us"
         self.go_to(search_url)
         self._accept_cookies_if_needed()
@@ -57,15 +58,7 @@ class GoogleSearchPage(BasePage):
         if self.has_captcha():
             return
 
-        if not self.search_box.is_visible(timeout=3_000):
-            self.logger.info("Search results loaded for: %s", query)
-            return
-
-        self.search_box.click()
-        self.search_box.fill(query)
-        self.search_box.press("Enter")
-        self.page.wait_for_load_state("domcontentloaded")
-        self.logger.info("Submitted search: %s", query)
+        self.logger.info("Search results loaded for: %s", query)
 
     def has_captcha(self) -> bool:
         """True when Google blocks automation with a CAPTCHA page."""

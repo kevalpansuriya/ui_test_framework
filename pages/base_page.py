@@ -17,7 +17,7 @@ class BasePage:
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def go_to(self, url: str) -> None:
-        """Open a URL and wait for the DOM."""
+        """Open a URL (stop waiting once the DOM is ready, not all assets)."""
         self.page.goto(url, wait_until="domcontentloaded")
         self.logger.info("Opened %s", url)
 

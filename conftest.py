@@ -1,8 +1,14 @@
 """Pytest fixtures and hooks for Playwright UI tests (Chrome only)."""
 
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
+
+# Ensure project root is importable when pytest is started from a subfolder
+_PROJECT_ROOT = Path(__file__).resolve().parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
 import pytest
 
