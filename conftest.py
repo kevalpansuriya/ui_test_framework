@@ -1,4 +1,4 @@
-"""Pytest fixtures and hooks for Playwright UI tests."""
+"""Pytest fixtures and hooks for Playwright UI tests (Chrome only)."""
 
 import os
 from datetime import datetime
@@ -10,10 +10,6 @@ from utils.config_loader import ConfigLoader
 from utils.screenshot import ScreenshotHelper
 
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-
 @pytest.fixture(scope="session")
 def test_config() -> ConfigLoader:
     return ConfigLoader()
@@ -23,27 +19,19 @@ def _is_ci() -> bool:
     return os.getenv("CI") == "true" or os.getenv("GITHUB_ACTIONS") == "true"
 
 
-# ---------------------------------------------------------------------------
-# Playwright browser settings (pytest-playwright)
-# ---------------------------------------------------------------------------
-
 @pytest.fixture(scope="session")
 def browser_type_launch_args(test_config):
-    """Browser launch options: headless in CI, real Chrome locally when available."""
+    """Always use installed Google Chrome (not bundled Chromium)."""
     settings = test_config.get_playwright_settings()
     headless = settings.get("headless", False)
     if _is_ci():
         headless = True
 
-    launch_options = {
+    return {
         "headless": headless,
+        "channel": "chrome",
         "args": ["--disable-blink-features=AutomationControlled"],
     }
-
-    if settings.get("use_chrome_channel", True) and not _is_ci():
-        launch_options["channel"] = "chrome"
-
-    return launch_options
 
 
 @pytest.fixture(scope="session")
@@ -63,10 +51,6 @@ def browser_context_args(test_config):
         ),
     }
 
-
-# ---------------------------------------------------------------------------
-# Failure artifacts: screenshot + trace hint
-# ---------------------------------------------------------------------------
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):

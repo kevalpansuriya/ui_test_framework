@@ -9,7 +9,7 @@ It includes one sample test: search Google for a name and open the first LinkedI
 - **Page Object Model** with clear, snake_case Python code
 - **Trace on failure** — video + trace zip saved under `test-results/`
 - **Screenshot on failure** — PNG saved under `screenshots/`
-- **Google → DuckDuckGo fallback** when Google shows a CAPTCHA
+- **Google Chrome only** — uses your installed Chrome browser (not Chromium)
 - **Playwright MCP** in Cursor for AI-assisted test development
 - **GitHub Actions** CI with artifact upload on failure
 
@@ -24,8 +24,7 @@ ui_test_framework/
 ├── pages/
 │   ├── base_page.py          # Shared browser helpers
 │   ├── google_search_page.py
-│   ├── duckduckgo_search_page.py
-│   └── web_search.py         # Main search flow + fallback
+│   └── web_search.py         # Google search → LinkedIn flow
 ├── tests/
 │   └── ui/
 │       └── test_google_linkedin_search.py
@@ -73,7 +72,7 @@ export PYTHONPATH=.
 python -m venv venv
 source venv/bin/activate   # or .\venv\Scripts\Activate.ps1 on Windows
 pip install -r requirements.txt
-playwright install chromium
+playwright install chrome
 ```
 
 ## Run tests
@@ -112,7 +111,7 @@ The trace viewer shows clicks, network, DOM snapshots, and timing — ideal for 
 | Command | Purpose |
 |--------|---------|
 | `playwright install` | Download browser binaries |
-| `playwright install chromium` | Install Chromium only |
+| `playwright install chrome` | Install Google Chrome for Playwright |
 | `playwright codegen google.com` | Record actions → Python code |
 | `playwright show-trace <file.zip>` | Open trace viewer |
 | `playwright --help` | Full CLI reference |
@@ -150,11 +149,9 @@ Edit `config/config.json`:
 
 | Key | Description |
 |-----|-------------|
-| `search_query` | Text to search for |
-| `search_engine` | Primary engine: `google` |
-| `search_engine_fallback` | Used when Google CAPTCHA appears: `duckduckgo` |
+| `search_query` | Text to search for on Google |
 | `playwright.headless` | `false` locally, forced `true` in CI |
-| `playwright.use_chrome_channel` | Use installed Chrome instead of bundled Chromium |
+| `playwright.browser` | Always `chrome` (installed Google Chrome) |
 
 ## Writing a new test
 
@@ -176,7 +173,7 @@ Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 | Job | What it runs | When |
 |-----|----------------|------|
 | **lint** | `flake8` (uses `.flake8` in the repo) | Every push / PR to `main` or `master` |
-| **smoke** | `pytest -m smoke` with Playwright + Chromium | After lint passes |
+| **smoke** | `pytest -m smoke` with Playwright + Chrome | Every push / PR |
 
 Smoke tests run headless in CI (`CI=true`). On failure, artifacts include screenshots, traces, and videos from `test-results/`.
 
@@ -191,7 +188,7 @@ pytest -m smoke
 
 | Issue | What to do |
 |-------|------------|
-| Google CAPTCHA | Run `pytest --headed` with Chrome installed; or rely on DuckDuckGo fallback |
+| Google CAPTCHA | Run `pytest --headed` locally with Chrome installed |
 | `playwright` not found | Activate venv and run `pip install -r requirements.txt` |
 | MCP not connecting | Install Node.js, restart Cursor, check MCP panel |
 | No trace file | Traces are only kept when a test **fails** (`retain-on-failure`) |

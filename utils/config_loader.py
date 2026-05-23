@@ -1,6 +1,7 @@
 """Load test settings from config/config.json."""
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -11,16 +12,12 @@ class ConfigLoader:
     DEFAULT_CONFIG = {
         "search_query": "keval pansuriya encora",
         "google_url": "https://www.google.com",
-        "duckduckgo_url": "https://duckduckgo.com",
-        "search_engine": "google",
-        "search_engine_fallback": "duckduckgo",
         "screenshot_path": "screenshots",
         "log_path": "logs",
         "trace_path": "test-results",
         "playwright": {
-            "browser": "chromium",
+            "browser": "chrome",
             "headless": False,
-            "use_chrome_channel": True,
             "timeout_ms": 30000,
             "viewport": {"width": 1920, "height": 1080},
         },
@@ -47,23 +44,14 @@ class ConfigLoader:
         defaults = self.DEFAULT_CONFIG["playwright"]
         return {**defaults, **self.settings.get("playwright", {})}
 
+    def is_ci(self) -> bool:
+        return os.getenv("CI") == "true" or os.getenv("GITHUB_ACTIONS") == "true"
+
     def get_search_query(self) -> str:
         return self.settings.get("search_query", self.DEFAULT_CONFIG["search_query"])
 
     def get_google_url(self) -> str:
         return self.settings.get("google_url", self.DEFAULT_CONFIG["google_url"])
-
-    def get_duckduckgo_url(self) -> str:
-        return self.settings.get("duckduckgo_url", self.DEFAULT_CONFIG["duckduckgo_url"])
-
-    def get_search_engine(self) -> str:
-        return self.settings.get("search_engine", self.DEFAULT_CONFIG["search_engine"])
-
-    def get_search_engine_fallback(self) -> str:
-        return self.settings.get(
-            "search_engine_fallback",
-            self.DEFAULT_CONFIG["search_engine_fallback"],
-        )
 
     def get_screenshot_path(self) -> str:
         return self.settings.get("screenshot_path", self.DEFAULT_CONFIG["screenshot_path"])

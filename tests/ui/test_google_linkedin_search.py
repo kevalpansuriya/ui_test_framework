@@ -23,11 +23,10 @@ class TestGoogleLinkedInSearch:
     def test_search_and_open_first_linkedin_profile(self):
         """
         Steps:
-        1. Open Google (with stealth settings when using Chrome).
+        1. Open Google in Chrome.
         2. Search for the configured query (default: keval pansuriya encora).
-        3. If Google shows a CAPTCHA, retry on DuckDuckGo (configurable).
-        4. Click the first LinkedIn profile link.
-        5. Assert the URL is a LinkedIn profile (/in/ or /pub/).
+        3. Click the first LinkedIn profile link.
+        4. Assert the URL is a LinkedIn profile (/in/ or /pub/).
         """
         linkedin_page = self.web_search.search_and_open_first_linkedin_profile(self.query)
 

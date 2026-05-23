@@ -10,8 +10,8 @@ Write-Host "Installing Python dependencies..."
 .\venv\Scripts\python -m pip install --upgrade pip
 .\venv\Scripts\pip install -r requirements.txt
 
-Write-Host "Installing Playwright browsers (Chromium)..."
-.\venv\Scripts\playwright install chromium
+Write-Host "Installing Playwright Chrome..."
+.\venv\Scripts\playwright install chrome
 
 Write-Host ""
 Write-Host "Done. Activate the venv:"
