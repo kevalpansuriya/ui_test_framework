@@ -1,30 +1,29 @@
+"""Run all tests and write an HTML report plus Playwright traces on failure."""
+
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
 
-def main():
+def main() -> int:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    reports_dir = Path("reports")
-    reports_dir.mkdir(parents=True, exist_ok=True)
-    report_path = reports_dir / f"report_{timestamp}.html"
+    report_path = Path("reports") / f"report_{timestamp}.html"
 
-    cmd = [
+    command = [
+        sys.executable,
+        "-m",
         "pytest",
         "--html",
         str(report_path),
         "--self-contained-html",
-        "--log-cli-level=INFO",
-        "--log-level=INFO",
     ]
 
-    print(f"Running: {' '.join(cmd)}")
-    print(f"Reports will be saved to: {report_path}")
-    print("Logs will be included in the HTML report")
-    # Screenshots on failure are already handled by pytest hook in conftest.py
-    subprocess.run(cmd, check=False)
+    print("Running:", " ".join(command))
+    print(f"HTML report: {report_path}")
+    print("Traces on failure: test-results/  →  playwright show-trace <trace.zip>")
+    return subprocess.call(command)
 
 
 if __name__ == "__main__":
-    main()
-
+    raise SystemExit(main())

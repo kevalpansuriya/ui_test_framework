@@ -1,77 +1,75 @@
-from typing import Dict, Any, Optional
+"""Load test settings from config/config.json."""
+
 import json
-import os
 from pathlib import Path
+from typing import Any
 
 
 class ConfigLoader:
-    """
-    Configuration loader class following SRP - handles only configuration loading
-    """
-    
-    def __init__(self, configPath: str = "config/config.json") -> None:
-        self.configPath: str = configPath
-        self.config: Dict[str, Any] = self._loadConfig()
-    
-    def _loadConfig(self) -> Dict[str, Any]:
-        """Load configuration from JSON file"""
-        try:
-            configFilePath = os.path.join(os.path.dirname(os.path.dirname(__file__)), self.configPath)
-            with open(configFilePath, 'r') as file:
-                return json.load(file)
-        except FileNotFoundError:
-            print(f"Config file not found at {self.configPath}, using default values")
-            return self._getDefaultConfig()
-        except json.JSONDecodeError:
-            print(f"Invalid JSON in config file, using default values")
-            return self._getDefaultConfig()
-    
-    def _getDefaultConfig(self) -> Dict[str, Any]:
-        """Return default configuration"""
-        return {
-            "baseUrl": "https://jsonplaceholder.typicode.com",
-            "uiBaseUrl": "https://the-internet.herokuapp.com",
-            "browser": "chrome",
-            "headless": False,
-            "implicitWait": 10,
-            "explicitWait": 20,
-            "screenshotPath": "screenshots",
-            "logPath": "logs"
-        }
-    
-    def get(self, key: str, defaultValue: Optional[Any] = None) -> Any:
-        """Get configuration value by key"""
-        return self.config.get(key, defaultValue)
-    
-    def getBaseUrl(self) -> str:
-        """Get API base URL"""
-        return self.config.get("baseUrl", "https://jsonplaceholder.typicode.com")
-    
-    def getUiBaseUrl(self) -> str:
-        """Get UI base URL"""
-        return self.config.get("uiBaseUrl", "https://the-internet.herokuapp.com")
-    
-    def getBrowser(self) -> str:
-        """Get browser name"""
-        return self.config.get("browser", "chrome")
-    
-    def isHeadless(self) -> bool:
-        """Check if headless mode is enabled"""
-        return self.config.get("headless", False)
-    
-    def getImplicitWait(self) -> int:
-        """Get implicit wait time"""
-        return self.config.get("implicitWait", 10)
-    
-    def getExplicitWait(self) -> int:
-        """Get explicit wait time"""
-        return self.config.get("explicitWait", 20)
-    
-    def getScreenshotPath(self) -> str:
-        """Get screenshot directory path"""
-        return self.config.get("screenshotPath", "screenshots")
-    
-    def getLogPath(self) -> str:
-        """Get log directory path"""
-        return self.config.get("logPath", "logs")
+    """Reads framework settings from a JSON file."""
 
+    DEFAULT_CONFIG = {
+        "search_query": "keval pansuriya encora",
+        "google_url": "https://www.google.com",
+        "duckduckgo_url": "https://duckduckgo.com",
+        "search_engine": "google",
+        "search_engine_fallback": "duckduckgo",
+        "screenshot_path": "screenshots",
+        "log_path": "logs",
+        "trace_path": "test-results",
+        "playwright": {
+            "browser": "chromium",
+            "headless": False,
+            "use_chrome_channel": True,
+            "timeout_ms": 30000,
+            "viewport": {"width": 1920, "height": 1080},
+        },
+    }
+
+    def __init__(self, config_path: str = "config/config.json") -> None:
+        self.config_path = config_path
+        self.settings = self._load()
+
+    def _load(self) -> dict[str, Any]:
+        project_root = Path(__file__).resolve().parent.parent
+        file_path = project_root / self.config_path
+
+        if not file_path.exists():
+            return dict(self.DEFAULT_CONFIG)
+
+        with open(file_path, encoding="utf-8") as file:
+            return json.load(file)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self.settings.get(key, default)
+
+    def get_playwright_settings(self) -> dict[str, Any]:
+        defaults = self.DEFAULT_CONFIG["playwright"]
+        return {**defaults, **self.settings.get("playwright", {})}
+
+    def get_search_query(self) -> str:
+        return self.settings.get("search_query", self.DEFAULT_CONFIG["search_query"])
+
+    def get_google_url(self) -> str:
+        return self.settings.get("google_url", self.DEFAULT_CONFIG["google_url"])
+
+    def get_duckduckgo_url(self) -> str:
+        return self.settings.get("duckduckgo_url", self.DEFAULT_CONFIG["duckduckgo_url"])
+
+    def get_search_engine(self) -> str:
+        return self.settings.get("search_engine", self.DEFAULT_CONFIG["search_engine"])
+
+    def get_search_engine_fallback(self) -> str:
+        return self.settings.get(
+            "search_engine_fallback",
+            self.DEFAULT_CONFIG["search_engine_fallback"],
+        )
+
+    def get_screenshot_path(self) -> str:
+        return self.settings.get("screenshot_path", self.DEFAULT_CONFIG["screenshot_path"])
+
+    def get_log_path(self) -> str:
+        return self.settings.get("log_path", self.DEFAULT_CONFIG["log_path"])
+
+    def get_trace_path(self) -> str:
+        return self.settings.get("trace_path", self.DEFAULT_CONFIG["trace_path"])

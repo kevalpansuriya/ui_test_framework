@@ -1,2 +1,0 @@
-# Base test classes package
-

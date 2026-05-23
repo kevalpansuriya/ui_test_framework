@@ -1,5 +1,6 @@
 [flake8]
 max-line-length = 120
+max-complexity = 10
 exclude =
     .git,
     __pycache__,
@@ -9,18 +10,15 @@ exclude =
     env,
     build,
     dist,
+    test-results,
+    reports,
     *.egg-info
 ignore =
-    E203,  # whitespace before ':'
-    E266,  # too many leading '#' for block comment
-    E501,  # line too long (handled by max-line-length)
-    W503,  # line break before binary operator
-    F401,  # imported but unused (allowed in __init__.py)
+    E203,
+    E266,
+    E501,
+    W503,
+    F401
 per-file-ignores =
-    __init__.py:F401  # Allow unused imports in __init__.py
-max-complexity = 10
+    __init__.py:F401
 select = E,W,F
-# F841: local variable assigned but never used - NOT IGNORED, will be caught
-# F401: imported but unused - ignored except in __init__.py
-# E501: line too long - handled by max-line-length=120
-

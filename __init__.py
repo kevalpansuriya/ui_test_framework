@@ -1,2 +1,1 @@
-# Test Automation Framework Package
-
+# UI test framework package

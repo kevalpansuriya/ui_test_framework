@@ -1,11 +1,20 @@
 {
-  "baseUrl": "https://jsonplaceholder.typicode.com",
-  "uiBaseUrl": "https://the-internet.herokuapp.com",
-  "browser": "chrome",
-  "headless": false,
-  "implicitWait": 10,
-  "explicitWait": 20,
-  "screenshotPath": "screenshots",
-  "logPath": "logs"
+  "search_query": "keval pansuriya encora",
+  "google_url": "https://www.google.com",
+  "duckduckgo_url": "https://duckduckgo.com",
+  "search_engine": "google",
+  "search_engine_fallback": "duckduckgo",
+  "screenshot_path": "screenshots",
+  "log_path": "logs",
+  "trace_path": "test-results",
+  "playwright": {
+    "browser": "chromium",
+    "headless": false,
+    "use_chrome_channel": true,
+    "timeout_ms": 30000,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  }
 }
-
